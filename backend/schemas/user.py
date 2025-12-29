@@ -1,10 +1,10 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 
 # Para criar usuário
 class UserCreate(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(..., max_length=72)
 
 # Para resposta (sem senha)
 class UserResponse(BaseModel):
@@ -18,7 +18,7 @@ class UserResponse(BaseModel):
 # Para login
 class UserLogin(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(..., max_length=72)
 
 # Token response
 class Token(BaseModel):

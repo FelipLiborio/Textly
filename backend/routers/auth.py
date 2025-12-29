@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Response, HTTPException
+from fastapi import APIRouter, Response, HTTPException, Request
 from services.auth import AuthService
 from schemas.user import UserCreate, UserLogin
 from core.auth import verify_token, create_access_token, create_refresh_token
@@ -52,8 +52,8 @@ async def login(user: UserLogin, response: Response):
 
 
 @router.post("/refresh")
-async def refresh(response: Response):
-    refresh_token = response.cookies.get("refresh_token")
+async def refresh(request: Request, response: Response):
+    refresh_token = request.cookies.get("refresh_token")
     if not refresh_token:
         raise HTTPException(status_code=401, detail="Refresh token missing")
 
@@ -63,7 +63,7 @@ async def refresh(response: Response):
 
     user_id = payload.get("sub")
     repo = UserRepository()
-    user = await repo.get_user_by_id(int(user_id))
+    user = await repo.get_user_by_id(user_id)
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
 

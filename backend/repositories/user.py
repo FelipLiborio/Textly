@@ -1,11 +1,7 @@
 from beanie import Document
 from pydantic import EmailStr
 from datetime import datetime
-from passlib.context import CryptContext
-from connections.mongo import database
-
-# Contexto para hash de senha
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+import bcrypt
 
 class User(Document):
     email: EmailStr
@@ -17,7 +13,10 @@ class User(Document):
 
 class UserRepository:
     async def create_user(self, email: str, password: str) -> User:
-        hashed = pwd_context.hash(password)
+        # Hash da senha com bcrypt
+        password_bytes = password.encode('utf-8')
+        salt = bcrypt.gensalt()
+        hashed = bcrypt.hashpw(password_bytes, salt).decode('utf-8')
         user = User(email=email, password_hash=hashed)
         await user.insert()
         return user
@@ -29,4 +28,7 @@ class UserRepository:
         return await User.get(user_id)
 
     def verify_password(self, plain: str, hashed: str) -> bool:
-        return pwd_context.verify(plain, hashed)
+        # Verificar senha com bcrypt
+        plain_bytes = plain.encode('utf-8')
+        hashed_bytes = hashed.encode('utf-8')
+        return bcrypt.checkpw(plain_bytes, hashed_bytes)

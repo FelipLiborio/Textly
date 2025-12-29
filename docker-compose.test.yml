@@ -18,3 +18,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: password
     # Sem volume, para teste
+
+# para subir rebuildando app e resetando banco:
+# docker compose -f docker-compose.test.yml down -v && docker compose -f docker-compose.test.yml up --build
+# para parar: docker compose -f docker-compose.test.yml down

@@ -1,14 +1,12 @@
 from fastapi import FastAPI
-from beanie import init_beanie
-from connections.mongo import database
-from repositories.user import User
+from connections.mongo import init_database
 from routers.auth import router as auth_router
 
 app = FastAPI(title="Textly API", version="1.0.0")
 
 @app.on_event("startup")
 async def startup_event():
-    await init_beanie(database=database, document_models=[User])
+    await init_database()
 
 app.include_router(auth_router)
 
