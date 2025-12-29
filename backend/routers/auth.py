@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Response, HTTPException, Request
 from services.auth import AuthService
 from schemas.user import UserCreate, UserLogin
-from core.auth import verify_token, create_access_token, create_refresh_token
-from repositories.user import UserRepository
+from core.config import settings
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -16,14 +15,14 @@ async def register(user: UserCreate, response: Response):
         key="access_token",
         value=tokens.access_token,
         httponly=True,
-        secure=False, 
+        secure=settings.cookie_secure,
         samesite="strict",
     )
     response.set_cookie(
         key="refresh_token",
         value=tokens.refresh_token,
         httponly=True,
-        secure=False,
+        secure=settings.cookie_secure,
         samesite="strict",
     )
     return {"message": "Registered successfully"}
@@ -38,14 +37,14 @@ async def login(user: UserLogin, response: Response):
         key="access_token",
         value=tokens.access_token,
         httponly=True,
-        secure=False,
+        secure=settings.cookie_secure,
         samesite="strict",
     )
     response.set_cookie(
         key="refresh_token",
         value=tokens.refresh_token,
         httponly=True,
-        secure=False,
+        secure=settings.cookie_secure,
         samesite="strict",
     )
     return {"message": "Logged in successfully"}
@@ -57,30 +56,22 @@ async def refresh(request: Request, response: Response):
     if not refresh_token:
         raise HTTPException(status_code=401, detail="Refresh token missing")
 
-    payload = verify_token(refresh_token)
-    if not payload or payload.get("type") != "refresh":
-        raise HTTPException(status_code=401, detail="Invalid refresh token")
-
-    user_id = payload.get("sub")
-    repo = UserRepository()
-    user = await repo.get_user_by_id(user_id)
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
-
-    # Generate new tokens
-    data = {"sub": str(user.id)}
-    access = create_access_token(data)
-    refresh_new = create_refresh_token(data)
+    service = AuthService()
+    tokens = await service.refresh(refresh_token)
 
     # Set new cookies
     response.set_cookie(
-        key="access_token", value=access, httponly=True, secure=False, samesite="strict"
+        key="access_token",
+        value=tokens.access_token,
+        httponly=True,
+        secure=settings.cookie_secure,
+        samesite="strict",
     )
     response.set_cookie(
         key="refresh_token",
-        value=refresh_new,
+        value=tokens.refresh_token,
         httponly=True,
-        secure=False,
+        secure=settings.cookie_secure,
         samesite="strict",
     )
     return {"message": "Tokens refreshed"}

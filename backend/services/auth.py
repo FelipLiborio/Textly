@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from repositories.user import UserRepository
-from core.auth import create_access_token, create_refresh_token
+from core.auth import create_access_token, create_refresh_token, verify_token
 from schemas.user import UserCreate, UserLogin, Token
 
 
@@ -31,6 +31,26 @@ class AuthService:
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
         # Gerar tokens
+        data = {"sub": str(user.id)}
+        access = create_access_token(data)
+        refresh = create_refresh_token(data)
+
+        return Token(access_token=access, refresh_token=refresh)
+
+    async def refresh(self, refresh_token: str) -> Token:
+        # Validar refresh token
+        payload = verify_token(refresh_token)
+        if not payload or payload.get("type") != "refresh":
+            raise HTTPException(status_code=401, detail="Invalid refresh token")
+
+        # Buscar usuário
+        user_id = payload.get("sub")
+        repo = UserRepository()
+        user = await repo.get_user_by_id(user_id)
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+
+        # Gerar novos tokens
         data = {"sub": str(user.id)}
         access = create_access_token(data)
         refresh = create_refresh_token(data)

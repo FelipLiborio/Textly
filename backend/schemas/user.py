@@ -8,12 +8,9 @@ class UserCreate(BaseModel):
 
 # Para resposta (sem senha)
 class UserResponse(BaseModel):
-    id: int
+    id: str
     email: EmailStr
-    created_at: str  
-
-    class Config:
-        from_attributes = True 
+    created_at: str 
 
 # Para login
 class UserLogin(BaseModel):
