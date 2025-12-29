@@ -1,12 +1,19 @@
 from fastapi import HTTPException, status
 from repositories.repository import RepositoryRepository, Repository
+from repositories.user import UserRepository
 from typing import List
 
 class RepositoryService:
     def __init__(self):
         self.repo = RepositoryRepository()
+        self.user_repo = UserRepository()
 
     async def create_repository(self, user_id: str, repo_data) -> Repository:
+        # Verificar se o usuário existe
+        user = await self.user_repo.get_user_by_id(user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
         return await self.repo.create_repository(user_id, repo_data.name, repo_data.description)
 
     async def get_user_repositories(self, user_id: str) -> List[Repository]:

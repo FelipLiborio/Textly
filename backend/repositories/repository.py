@@ -2,6 +2,8 @@ from beanie import Document
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional, List
+from bson import ObjectId
+from core.utils import validate_object_id
 
 class Repository(Document):
     user_id: str
@@ -22,10 +24,16 @@ class RepositoryRepository:
         return await Repository.find(Repository.user_id == user_id).to_list()
 
     async def get_repository_by_id(self, repo_id: str) -> Optional[Repository]:
-        return await Repository.get(repo_id)
+        object_id = validate_object_id(repo_id)
+        if not object_id:
+            return None
+        return await Repository.get(object_id)
 
     async def update_repository(self, repo_id: str, name: str, description: Optional[str] = None) -> Optional[Repository]:
-        repo = await Repository.get(repo_id)
+        object_id = validate_object_id(repo_id)
+        if not object_id:
+            return None
+        repo = await Repository.get(object_id)
         if repo:
             repo.name = name
             repo.description = description
@@ -33,7 +41,10 @@ class RepositoryRepository:
         return repo
 
     async def delete_repository(self, repo_id: str) -> bool:
-        repo = await Repository.get(repo_id)
+        object_id = validate_object_id(repo_id)
+        if not object_id:
+            return False
+        repo = await Repository.get(object_id)
         if repo:
             await repo.delete()
             return True
