@@ -19,6 +19,7 @@ class RepositoryService:
     async def get_user_repositories(self, user_id: str) -> List[Repository]:
         return await self.repo.get_repositories_by_user(user_id)
 
+    # pega o repository pelo id e verifica se pertence ao user_id, muito reutilizado
     async def get_repository(self, user_id: str, repo_id: str) -> Repository:
         repository = await self.repo.get_repository_by_id(repo_id)
         if not repository:
