@@ -10,7 +10,7 @@ class AuthService:
         # Verificar se email já existe
         existing = await repo.get_user_by_email(user_data.email)
         if existing:
-            raise HTTPException(status_code=400, detail="Email already registered")
+            raise HTTPException(status_code=409, detail="Email already registered")
 
         # Criar usuário
         user = await repo.create_user(user_data.email, user_data.password)
