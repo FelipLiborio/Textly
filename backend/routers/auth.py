@@ -6,6 +6,17 @@ from core.config import settings
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
+@router.get("/me")
+async def get_me(request: Request, response: Response):
+    access_token = request.cookies.get("access_token")
+    if not access_token:
+        raise HTTPException(status_code=401, detail="Access token missing")
+
+    service = AuthService()
+    user = await service.get_current_user(access_token)
+    return {"user": user}
+
+
 @router.post("/register")
 async def register(user: UserCreate, response: Response):
     service = AuthService()

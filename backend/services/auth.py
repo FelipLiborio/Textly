@@ -56,3 +56,16 @@ class AuthService:
         refresh = create_refresh_token(data)
 
         return Token(access_token=access, refresh_token=refresh)
+    
+    async def get_current_user(self, token: str):
+        '''Este método pode ser implementado para extrair o usuário atual do token de acesso.'''
+        payload = verify_token(token)
+        if not payload:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        user_id = payload.get("sub")
+        repo = UserRepository()
+        user = await repo.get_user_by_id(user_id)
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+        return user
+        
