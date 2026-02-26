@@ -1,16 +1,22 @@
 // src/components/auth/header/AuthHeader.tsx
-import styles from './AuthHeader.module.css';
+import { AppBar, Toolbar, Typography, Link, Box } from '@mui/material';
 
 export default function AuthHeader() {
   return (
-    <header className={styles.header}>
-      <div className={styles.container}>
-        <span className={styles.brand}>Textly</span>
-        <nav className={styles.nav}>
-          <a href="#" className={styles.link}>Sobre</a>
-          <a href="#" className={styles.link}>Contato</a>
-        </nav>
-      </div>
-    </header>
+    <AppBar position="static">
+      <Toolbar>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          Textly
+        </Typography>
+        <Box>
+          <Link href="#" color="inherit" sx={{ mr: 2 }}>
+            Sobre
+          </Link>
+          <Link href="#" color="inherit">
+            Contato
+          </Link>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 }
