@@ -1,6 +1,5 @@
+
 from pydantic import BaseModel
-from typing import Optional, List
-from datetime import datetime
 
 
 class NoteCreate(BaseModel):
@@ -10,8 +9,8 @@ class NoteCreate(BaseModel):
 
 
 class NoteUpdate(BaseModel):
-    title: Optional[str] = None
-    content: Optional[str] = None
+    title: str | None = None
+    content: str | None = None
 
 
 class NoteResponse(BaseModel):

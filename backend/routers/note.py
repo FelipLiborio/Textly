@@ -1,8 +1,9 @@
+
 from fastapi import APIRouter, Depends
-from services.note import NoteService
-from schemas.note import NoteCreate, NoteUpdate, NoteResponse, NoteMetadata
-from typing import List
+
 from core.auth import get_current_user
+from schemas.note import NoteCreate, NoteMetadata, NoteResponse, NoteUpdate
+from services.note import NoteService
 
 router = APIRouter(prefix="/repositories/{repo_id}/notes", tags=["notes"])
 
@@ -24,7 +25,7 @@ async def create_note(
     )
 
 
-@router.get("/", response_model=List[NoteMetadata])
+@router.get("/", response_model=list[NoteMetadata])
 async def get_notes(repo_id: str, current_user: dict = Depends(get_current_user)):
     service = NoteService()
     notes = await service.get_repository_notes_metadata(current_user["sub"], repo_id)

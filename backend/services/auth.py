@@ -1,7 +1,8 @@
-from fastapi import HTTPException, status
-from repositories.user import UserRepository
+from fastapi import HTTPException
+
 from core.auth import create_access_token, create_refresh_token, verify_token
-from schemas.user import UserCreate, UserLogin, Token
+from repositories.user import UserRepository
+from schemas.user import Token, UserCreate, UserLogin
 
 
 class AuthService:

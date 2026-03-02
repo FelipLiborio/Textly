@@ -1,17 +1,18 @@
+
 from fastapi import APIRouter, Depends
-from services.repository import RepositoryService
-from services.folder import FolderService
-from services.note import NoteService
-from schemas.repository import (
-    RepositoryCreate,
-    RepositoryResponse,
-    RepositoryUpdate,
-    RepositoryDetailResponse,
-)
+
+from core.auth import get_current_user
 from schemas.folder import FolderResponse
 from schemas.note import NoteMetadata
-from typing import List
-from core.auth import get_current_user
+from schemas.repository import (
+    RepositoryCreate,
+    RepositoryDetailResponse,
+    RepositoryResponse,
+    RepositoryUpdate,
+)
+from services.folder import FolderService
+from services.note import NoteService
+from services.repository import RepositoryService
 
 router = APIRouter(prefix="/repositories", tags=["repositories"])
 
@@ -31,7 +32,7 @@ async def create_repository(
     )
 
 
-@router.get("/", response_model=List[RepositoryResponse])
+@router.get("/", response_model=list[RepositoryResponse])
 async def get_user_repositories(current_user: dict = Depends(get_current_user)):
     service = RepositoryService()
     repos = await service.get_user_repositories(current_user["sub"])

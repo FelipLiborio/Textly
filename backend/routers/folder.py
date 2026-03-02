@@ -1,8 +1,9 @@
+
 from fastapi import APIRouter, Depends
-from services.folder import FolderService
-from schemas.folder import FolderCreate, FolderResponse, FolderUpdate
-from typing import List
+
 from core.auth import get_current_user
+from schemas.folder import FolderCreate, FolderResponse, FolderUpdate
+from services.folder import FolderService
 
 router = APIRouter(prefix="/repositories/{repo_id}/folders", tags=["folders"])
 
@@ -23,7 +24,7 @@ async def create_folder(
     )
 
 
-@router.get("/", response_model=List[FolderResponse])
+@router.get("/", response_model=list[FolderResponse])
 async def get_folders(repo_id: str, current_user: dict = Depends(get_current_user)):
     service = FolderService()
     folders = await service.get_repository_folders(current_user["sub"], repo_id)

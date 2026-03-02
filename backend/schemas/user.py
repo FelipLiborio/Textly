@@ -1,5 +1,6 @@
+
 from pydantic import BaseModel, EmailStr, Field
-from typing import Optional
+
 
 # Para criar usuário
 class UserCreate(BaseModel):

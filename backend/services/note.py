@@ -1,8 +1,9 @@
-from fastapi import HTTPException, status
-from services.repository import RepositoryService
+
+from fastapi import HTTPException
+
+from repositories.note import Note, NoteRepository
 from services.folder import FolderService
-from repositories.note import NoteRepository, Note
-from typing import List
+from services.repository import RepositoryService
 
 
 class NoteService:
@@ -26,14 +27,14 @@ class NoteService:
             repo_id, note_data.title, note_data.content, note_data.parent_id
         )
 
-    async def get_repository_notes(self, user_id: str, repo_id: str) -> List[Note]:
+    async def get_repository_notes(self, user_id: str, repo_id: str) -> list[Note]:
         # Verificar se repositório existe e pertence ao usuário
         await self.repo_service.get_repository(user_id, repo_id)
         return await self.note_repo.get_notes_by_repository(repo_id)
 
     async def get_repository_notes_metadata(
         self, user_id: str, repo_id: str
-    ) -> List[Note]:
+    ) -> list[Note]:
         # Verificar se repositório existe e pertence ao usuário
         await self.repo_service.get_repository(user_id, repo_id)
         # Retorna apenas metadata (sem content)

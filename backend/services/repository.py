@@ -1,7 +1,9 @@
-from fastapi import HTTPException, status
-from repositories.repository import RepositoryRepository, Repository
+
+from fastapi import HTTPException
+
+from repositories.repository import Repository, RepositoryRepository
 from repositories.user import UserRepository
-from typing import List
+
 
 class RepositoryService:
     def __init__(self):
@@ -16,7 +18,7 @@ class RepositoryService:
 
         return await self.repo.create_repository(user_id, repo_data.name, repo_data.description)
 
-    async def get_user_repositories(self, user_id: str) -> List[Repository]:
+    async def get_user_repositories(self, user_id: str) -> list[Repository]:
         return await self.repo.get_repositories_by_user(user_id)
 
     # pega o repository pelo id e verifica se pertence ao user_id, muito reutilizado
@@ -29,7 +31,7 @@ class RepositoryService:
         return repository
 
     async def update_repository(self, user_id: str, repo_id: str, repo_data) -> Repository:
-        repository = await self.get_repository(user_id, repo_id)
+        await self.get_repository(user_id, repo_id)
         updated = await self.repo.update_repository(repo_id, repo_data.name, repo_data.description)
         if not updated:
             raise HTTPException(status_code=500, detail="Failed to update repository")
