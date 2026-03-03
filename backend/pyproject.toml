@@ -2,7 +2,7 @@
 name = "Textly_Backend"
 version = "0.1.0"
 description = "API com FastAPI, MongoDB (Beanie)"
-requires-python = ">=3.11"
+requires-python = "==3.14"
 dependencies = [
     "fastapi==0.128.0",
     "uvicorn[standard]==0.40.0",
