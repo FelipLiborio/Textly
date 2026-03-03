@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Response, HTTPException, Request
-from services.auth import AuthService
-from schemas.user import UserCreate, UserLogin
+from fastapi import APIRouter, HTTPException, Request, Response
+
 from core.config import settings
+from schemas.user import UserCreate, UserLogin
+from services.auth import AuthService
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 

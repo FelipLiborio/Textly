@@ -1,9 +1,10 @@
-from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
+from motor.motor_asyncio import AsyncIOMotorClient
+
 from core.config import settings
-from repositories.user import User
-from repositories.repository import Repository
 from repositories.note import Folder, Note
+from repositories.repository import Repository
+from repositories.user import User
 
 # Cliente MongoDB
 client = AsyncIOMotorClient(settings.database_url)

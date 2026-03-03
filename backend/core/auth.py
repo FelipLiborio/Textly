@@ -1,11 +1,12 @@
 from datetime import datetime, timedelta
-from typing import Optional
-from jose import JWTError, jwt
-from core.config import settings
+
 from fastapi import HTTPException, Request
+from jose import JWTError, jwt
+
+from core.config import settings
 
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
     expire = datetime.utcnow() + (
         expires_delta or timedelta(minutes=settings.access_token_expire_minutes)
@@ -22,7 +23,7 @@ def create_refresh_token(data: dict):
     return jwt.encode(to_encode, settings.secret_key, algorithm="HS256")
 
 
-def verify_token(token: str) -> Optional[dict]:
+def verify_token(token: str) -> dict | None:
     try:
         payload = jwt.decode(token, settings.secret_key, algorithms=["HS256"])
         return payload

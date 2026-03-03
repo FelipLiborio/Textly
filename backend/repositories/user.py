@@ -1,7 +1,9 @@
+from datetime import datetime
+
+import bcrypt
 from beanie import Document
 from pydantic import EmailStr
-from datetime import datetime
-import bcrypt
+
 
 class User(Document):
     email: EmailStr

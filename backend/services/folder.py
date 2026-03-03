@@ -1,7 +1,8 @@
-from fastapi import HTTPException, status
+
+from fastapi import HTTPException
+
+from repositories.note import Folder, FolderRepository
 from services.repository import RepositoryService
-from repositories.note import FolderRepository, Folder
-from typing import List
 
 
 class FolderService:
@@ -23,22 +24,22 @@ class FolderService:
             repo_id, folder_data.name, folder_data.parent_id
         )
 
-    async def get_repository_folders(self, user_id: str, repo_id: str) -> List[Folder]:
+    async def get_repository_folders(self, user_id: str, repo_id: str) -> list[Folder]:
         # Verificar se repositório existe e pertence ao usuário
         await self.repo_service.get_repository(user_id, repo_id)
         return await self.folder_repo.get_folders_by_repository(repo_id)
 
-    async def get_root_folders(self, user_id: str, repo_id: str) -> List[Folder]:
+    async def get_root_folders(self, user_id: str, repo_id: str) -> list[Folder]:
         # Verificar se repositório existe e pertence ao usuário
         await self.repo_service.get_repository(user_id, repo_id)
         # Só pastas raiz (parent_id = None)
         return await Folder.find(
-            Folder.repository_id == repo_id, Folder.parent_id == None
+            Folder.repository_id == repo_id, Folder.parent_id is None
         ).to_list()
 
     async def get_child_folders(
         self, user_id: str, repo_id: str, parent_id: str
-    ) -> List[Folder]:
+    ) -> list[Folder]:
         # Verificar se repositório existe e pertence ao usuário
         await self.repo_service.get_repository(user_id, repo_id)
         # Verificar se parent_id existe e pertence ao repo

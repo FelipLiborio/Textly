@@ -1,14 +1,14 @@
-from beanie import Document
-from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional, List
+
+from beanie import Document
+
 from core.utils import validate_object_id
 
 
 class Folder(Document):
     repository_id: str
     name: str
-    parent_id: Optional[str] = None  # None para pastas raiz do repositório
+    parent_id: str | None = None  # None para pastas raiz do repositório
     created_at: datetime = datetime.utcnow()
     updated_at: datetime = datetime.utcnow()
 
@@ -30,22 +30,22 @@ class Note(Document):
 
 class FolderRepository:
     async def create_folder(
-        self, repository_id: str, name: str, parent_id: Optional[str] = None
+        self, repository_id: str, name: str, parent_id: str | None = None
     ) -> Folder:
         folder = Folder(repository_id=repository_id, name=name, parent_id=parent_id)
         await folder.insert()
         return folder
 
-    async def get_folders_by_repository(self, repository_id: str) -> List[Folder]:
+    async def get_folders_by_repository(self, repository_id: str) -> list[Folder]:
         return await Folder.find(Folder.repository_id == repository_id).to_list()
 
-    async def get_folder_by_id(self, folder_id: str) -> Optional[Folder]:
+    async def get_folder_by_id(self, folder_id: str) -> Folder | None:
         object_id = validate_object_id(folder_id)
         if not object_id:
             return None
         return await Folder.get(object_id)
 
-    async def update_folder(self, folder_id: str, name: str) -> Optional[Folder]:
+    async def update_folder(self, folder_id: str, name: str) -> Folder | None:
         object_id = validate_object_id(folder_id)
         if not object_id:
             return None
@@ -80,10 +80,10 @@ class NoteRepository:
         await note.insert()
         return note
 
-    async def get_notes_by_repository(self, repository_id: str) -> List[Note]:
+    async def get_notes_by_repository(self, repository_id: str) -> list[Note]:
         return await Note.find(Note.repository_id == repository_id).to_list()
 
-    async def get_note_by_id(self, note_id: str) -> Optional[Note]:
+    async def get_note_by_id(self, note_id: str) -> Note | None:
         object_id = validate_object_id(note_id)
         if not object_id:
             return None
@@ -91,7 +91,7 @@ class NoteRepository:
 
     async def update_note(
         self, note_id: str, title: str, content: str
-    ) -> Optional[Note]:
+    ) -> Note | None:
         object_id = validate_object_id(note_id)
         if not object_id:
             return None
